@@ -8,19 +8,73 @@
  * Implements hook_cron().
  *
  * Synchronizes and fetches themes from
- * www.humanitarianresponse.info/api/v1.0/themes on cron.
+ * reliefweb on cron.
  */
 function ms_themes_cron() {
   ms_themes_fetch_and_sync();
 }
 
 /**
- * Fetch and sync countries.
+ * Fetch and sync themes.
  *
- * Fetch and sync countries from
- * www.humanitarianresponse.info/api/v1.0/themes.
+ * Fetch and sync themes from Reliefweb.
  */
 function ms_themes_fetch_and_sync() {
+  $url = 'http://api.rw.dev.mvp.568elmp03.blackmesh.com/v1/references/themes';
+
+  while (TRUE) {
+    $request = drupal_http_request($url);
+    if (isset($request->data)) {
+      $data = drupal_json_decode($request->data);
+      if (empty($data['data'])) {
+        return;
+      }
+
+      foreach ($data['data'] as $item) {
+        if (isset($item['fields']['name']) && $item['fields']['name'] && isset($item['id']) && $item['id']) {
+          $query = new EntityFieldQuery();
+          $query->entityCondition('entity_type', 'taxonomy_term');
+          $query->entityCondition('bundle', 'ms_rw_themes', '=');
+          $query->fieldCondition('field_ms_rw_id', 'value', $item['id'], '=');
+          $result = $query->execute();
+
+          $term = new stdClass();
+          if (!isset($result['taxonomy_term'])) {
+            $vocabularies = taxonomy_vocabulary_get_names();
+            $term = (object) array(
+              'vid' => $vocabularies['ms_rw_themes']->vid,
+              'name' => $item['fields']['name'],
+              'vocabulary_machine_name' => 'ms_rw_themes',
+            );
+          }
+          else {
+            $tid = array_pop($result['taxonomy_term']);
+            $term = taxonomy_term_load($tid->tid);
+          }
+          $term->name = $item['fields']['name'];
+          $term->name_field[LANGUAGE_NONE][0]['value'] = $item['fields']['name'];
+          $term->field_ms_hrinfo_id[LANGUAGE_NONE][0]['value'] = $item['id'];
+
+          taxonomy_term_save($term);
+        }
+      }
+      if (isset($data['links']) && isset($data['links']['next']['href'])) {
+        $url = $data['links']['next']['href'];
+      }
+      else {
+        break;
+      }
+    }
+  }
+}
+
+/**
+ * Fetch and sync themes.
+ *
+ * Fetch and sync themes from
+ * www.humanitarianresponse.info/api/v1.0/themes.
+ */
+function ms_themes_hrinfo_fetch_and_sync() {
   $languages = array(
     'en',
     'fr',
