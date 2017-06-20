@@ -10,6 +10,47 @@
 function ms_themes_field_default_field_instances() {
   $field_instances = array();
 
+  // Exported field_instance: 'taxonomy_term-ms_rw_themes-field_ms_rw_id'.
+  $field_instances['taxonomy_term-ms_rw_themes-field_ms_rw_id'] = array(
+    'bundle' => 'ms_rw_themes',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'number',
+        'settings' => array(
+          'decimal_separator' => '.',
+          'prefix_suffix' => TRUE,
+          'scale' => 0,
+          'thousand_separator' => '',
+        ),
+        'type' => 'number_integer',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'taxonomy_term',
+    'field_name' => 'field_ms_rw_id',
+    'label' => 'Reliefweb ID',
+    'required' => 1,
+    'settings' => array(
+      'entity_translation_sync' => FALSE,
+      'max' => '',
+      'min' => 0,
+      'prefix' => '',
+      'suffix' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'number',
+      'settings' => array(),
+      'type' => 'number',
+      'weight' => 2,
+    ),
+  );
+
   // Exported field_instance: 'taxonomy_term-ms_themes-field_ms_hrinfo_id'.
   $field_instances['taxonomy_term-ms_themes-field_ms_hrinfo_id'] = array(
     'bundle' => 'ms_themes',
@@ -92,6 +133,7 @@ function ms_themes_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('Hrinfo ID');
   t('Name');
+  t('Reliefweb ID');
 
   return $field_instances;
 }
