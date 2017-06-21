@@ -20,7 +20,7 @@ function ms_themes_cron() {
  * Fetch and sync themes from Reliefweb.
  */
 function ms_themes_fetch_and_sync() {
-  $url = 'http://api.rw.dev.mvp.568elmp03.blackmesh.com/v1/references/themes';
+  $url = 'https://api.reliefweb.int/v1/references/themes?appname=assessmentregistry';
 
   while (TRUE) {
     $request = drupal_http_request($url);
@@ -53,7 +53,7 @@ function ms_themes_fetch_and_sync() {
           }
           $term->name = $item['fields']['name'];
           $term->name_field[LANGUAGE_NONE][0]['value'] = $item['fields']['name'];
-          $term->field_ms_hrinfo_id[LANGUAGE_NONE][0]['value'] = $item['id'];
+          $term->field_ms_rw_id[LANGUAGE_NONE][0]['value'] = $item['id'];
 
           taxonomy_term_save($term);
         }
