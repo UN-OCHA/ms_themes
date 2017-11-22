@@ -28,6 +28,7 @@ function ms_themes_fetch_and_sync() {
   $url = 'https://api.reliefweb.int/v1/references/themes?appname=assessmentregistry';
 
   while (TRUE) {
+    watchdog('ms_themes', 'Fetching ' . $url);
     $request = drupal_http_request($url);
     if (isset($request->data)) {
       $data = drupal_json_decode($request->data);
